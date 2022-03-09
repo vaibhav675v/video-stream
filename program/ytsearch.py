@@ -40,7 +40,7 @@ async def youtube_search(_, message: Message):
             text += f"⏱ **Duration:** `{results[i]['duration']}`\n"
             text += f"👀 **Views:** `{results[i]['views']}`\n"
             text += f"📣 **Channel:** {results[i]['channel']}\n"
-            text += f"🔗 url: https://www.youtube.com{results[i]['url_suffix']}\n\n"
+            text += f"🔗 **Link:** https://www.youtube.com{results[i]['url_suffix']}\n\n"
         except IndexError:
             break
     await m.edit_text(
