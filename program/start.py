@@ -31,19 +31,27 @@ from config import (
     OWNER_USERNAME,
     UPDATES_CHANNEL,
 )
-from driver.decorators import check_blacklist
-from program import __version__, LOGS
-from driver.core import bot, me_bot, me_user
-from driver.filters import command
-from driver.database.dbchat import add_served_chat, is_served_chat
-from driver.database.dbpunish import is_gbanned_user
-from driver.database.dbusers import add_served_user, is_served_user
-from driver.database.dblockchat import blacklisted_chats
 
+from program import __version__, LOGS
+
+from driver.filters import command
+from driver.core import bot, me_bot, me_user
+from driver.decorators import check_blacklist
+from driver.database.dbusers import add_served_user
+from driver.database.dbpunish import is_gbanned_user
+from driver.database.dblockchat import blacklisted_chats
+from driver.database.dbchat import add_served_chat, is_served_chat
+
+from pytgcalls import (__version__ as pytover)
 from pyrogram import Client, filters, __version__ as pyrover
 from pyrogram.errors import FloodWait, ChatAdminRequired
-from pytgcalls import (__version__ as pytover)
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, ChatJoinRequest
+from pyrogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ChatJoinRequest,
+    Message,
+)
+
 
 __major__ = 0
 __minor__ = 2
@@ -78,13 +86,8 @@ async def _human_time_duration(seconds):
     command(["start", f"start@{BOT_USERNAME}"]) & filters.private & ~filters.edited
 )
 @check_blacklist()
-async def start_(c: Client, message: Message):
-    user_id = message.from_user.id
-    if await is_served_user(user_id):
-        pass
-    else:
-        await add_served_user(user_id)
-        return
+async def start_pm_bot(_, message: Message):
+    await add_served_user(message.from_user.id)
     await message.reply_text(
         f"""✨ **Welcome {message.from_user.mention()} !**\n
 💭 [{me_bot.first_name}](https://t.me/{BOT_USERNAME}) **Is a bot to play music and video in groups, through the Telegram Group video chat!**
@@ -162,7 +165,7 @@ async def ping_pong(c: Client, message: Message):
     start = time()
     m_reply = await message.reply_text("pinging...")
     delta_ping = time() - start
-    await m_reply.edit_text("🏓 `PONG!!`\n" f"⚡️ `{delta_ping * 1000:.3f} ms`")
+    await m_reply.edit_text("🏓 PONG !\n" f"⚡️ `{delta_ping * 1000:.3f} ms`")
 
 
 @Client.on_message(command(["uptime", f"uptime@{BOT_USERNAME}"]) & ~filters.edited)
